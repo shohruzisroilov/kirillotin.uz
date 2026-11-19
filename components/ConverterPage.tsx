@@ -11,6 +11,9 @@ import {
   Moon,
   Sun,
   Menu,
+  CreditCard,
+  Check,
+  ArrowLeftRight,
 } from "lucide-react";
 import Link from "next/link";
 import { FileUploader } from "@/components/FileUploader";
@@ -19,9 +22,11 @@ import { useToast } from "@/components/ToastContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage } from "@/components/LanguageContext";
 import {
+  Script,
+  convertText,
+  detectScript,
   cyrillicToLatin,
   latinToCyrillic,
-  isCyrillic,
 } from "@/lib/converter";
 import {
   copyToClipboard,
@@ -30,12 +35,6 @@ import {
   saveToLocalStorage,
   getFromLocalStorage,
 } from "@/lib/utils";
-
-type Direction = "cyrillic-to-latin" | "latin-to-cyrillic";
-
-function detectDirection(text: string): Direction {
-  return isCyrillic(text) ? "cyrillic-to-latin" : "latin-to-cyrillic";
-}
 
 export function ConverterPage() {
   const { addToast } = useToast();
@@ -55,57 +54,169 @@ export function ConverterPage() {
     }
   }, [locale, mounted, t]);
 
-  const [input, setInput]           = useState("");
-  const [output, setOutput]         = useState("");
-  const [direction, setDirection]   = useState<Direction>("cyrillic-to-latin");
-  const [fileName, setFileName]     = useState("");
-  const [sourceFile, setSourceFile] = useState<File | null>(null);
-  const [sourceText, setSourceText] = useState("");
+  const [input, setInput]               = useState("");
+  const [output, setOutput]             = useState("");
+  const [fromScript, setFromScript]     = useState<Script>("cyrillic");
+  const [toScript, setToScript]         = useState<Script>("latin-new");
+  const [autoDetect, setAutoDetect]     = useState(true);
+  const [fileName, setFileName]         = useState("");
+  const [sourceFile, setSourceFile]     = useState<File | null>(null);
+  const [sourceText, setSourceText]     = useState("");
   const [fileConverted, setFileConverted] = useState<{
     name: string;
     text: string;
-    direction: Direction;
+    fromScript: Script;
+    toScript: Script;
   } | null>(null);
   const [fileConverting, setFileConverting] = useState(false);
-  const [copied, setCopied]         = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
-  const [donateOpen, setDonateOpen]   = useState(false);
+  const [copied, setCopied]             = useState(false);
+  const [contactOpen, setContactOpen]   = useState(false);
+  const [donateOpen, setDonateOpen]     = useState(false);
+  const [cardCopied, setCardCopied]     = useState(false);
+
+  const handleCopyCard = async () => {
+    const ok = await copyToClipboard("9860190110799466");
+    if (ok) {
+      setCardCopied(true);
+      addToast(t("modalDonateCopiedToast"));
+      setTimeout(() => setCardCopied(false), 2200);
+    }
+  };
 
   /* ── Persist ── */
   useEffect(() => {
-    const savedIn  = getFromLocalStorage("converter-input");
-    const savedOut = getFromLocalStorage("converter-output");
-    const savedDir = getFromLocalStorage("converter-direction") as Direction | null;
+    const savedIn    = getFromLocalStorage("converter-input");
+    const savedOut   = getFromLocalStorage("converter-output");
+    const savedFrom  = getFromLocalStorage("converter-from-script") as Script | null;
+    const savedTo    = getFromLocalStorage("converter-to-script") as Script | null;
+    const savedAuto  = getFromLocalStorage("converter-auto-detect");
+    const legacyDir  = getFromLocalStorage("converter-direction");
+
     if (savedIn)  setInput(savedIn);
     if (savedOut) setOutput(savedOut);
-    if (savedDir === "cyrillic-to-latin" || savedDir === "latin-to-cyrillic") {
-      setDirection(savedDir);
+
+    if (savedFrom && (savedFrom === "cyrillic" || savedFrom === "latin-old" || savedFrom === "latin-new")) {
+      setFromScript(savedFrom);
+    } else if (legacyDir === "latin-to-cyrillic") {
+      setFromScript("latin-old");
+    }
+
+    if (savedTo && (savedTo === "cyrillic" || savedTo === "latin-old" || savedTo === "latin-new")) {
+      setToScript(savedTo);
+    } else if (legacyDir === "latin-to-cyrillic") {
+      setToScript("cyrillic");
+    }
+
+    if (savedAuto !== null) {
+      setAutoDetect(savedAuto === "true");
     }
   }, []);
 
-  useEffect(() => { saveToLocalStorage("converter-input", input); },         [input]);
-  useEffect(() => { saveToLocalStorage("converter-output", output); },       [output]);
-  useEffect(() => { saveToLocalStorage("converter-direction", direction); }, [direction]);
+  useEffect(() => { saveToLocalStorage("converter-input", input); },             [input]);
+  useEffect(() => { saveToLocalStorage("converter-output", output); },           [output]);
+  useEffect(() => { saveToLocalStorage("converter-from-script", fromScript); },   [fromScript]);
+  useEffect(() => { saveToLocalStorage("converter-to-script", toScript); },       [toScript]);
+  useEffect(() => { saveToLocalStorage("converter-auto-detect", String(autoDetect)); }, [autoDetect]);
 
-  const convert = useCallback((text: string, dir: Direction): string => {
+  const convert = useCallback((text: string, from: Script, to: Script): string => {
     if (!text.trim()) return "";
-    return dir === "cyrillic-to-latin"
-      ? cyrillicToLatin(text)
-      : latinToCyrillic(text);
+    return convertText(text, from, to);
   }, []);
 
-  /* Auto-detect direction when input changes */
+  /* Auto-detect script when input changes */
   const handleInputChange = useCallback((text: string) => {
     setInput(text);
-    if (text.trim()) {
-      setDirection(detectDirection(text));
+    if (text.trim() && autoDetect) {
+      const detected = detectScript(text);
+      setFromScript(detected);
+      if (toScript === detected) {
+        setToScript(detected === "cyrillic" ? "latin-new" : "cyrillic");
+      }
     }
+  }, [autoDetect, toScript]);
+
+  const handleSelectFrom = (s: Script) => {
+    setAutoDetect(false);
+    setFromScript(s);
+    if (toScript === s) {
+      if (s === "cyrillic") setToScript("latin-new");
+      else if (s === "latin-new") setToScript("cyrillic");
+      else if (s === "latin-old") setToScript("latin-new");
+    }
+  };
+
+  const handleSelectTo = (s: Script) => {
+    setToScript(s);
+    if (fromScript === s) {
+      setAutoDetect(false);
+      if (s === "cyrillic") setFromScript("latin-new");
+      else if (s === "latin-new") setFromScript("cyrillic");
+      else if (s === "latin-old") setFromScript("latin-new");
+    }
+  };
+
+  const handleToggleAuto = () => {
+    const nextAuto = !autoDetect;
+    setAutoDetect(nextAuto);
+    if (nextAuto && input.trim()) {
+      const detected = detectScript(input);
+      setFromScript(detected);
+      if (toScript === detected) {
+        setToScript(detected === "cyrillic" ? "latin-new" : "cyrillic");
+      }
+    }
+  };
+
+  const handleSwap = () => {
+    setAutoDetect(false);
+    const prevFrom = fromScript;
+    const prevTo = toScript;
+    setFromScript(prevTo);
+    setToScript(prevFrom);
+
+    if (output.trim()) {
+      const newIn = output;
+      setInput(newIn);
+      setOutput(convertText(newIn, prevTo, prevFrom));
+    }
+  };
+
+  const getScriptTitle = (s: Script, withBadge = true) => {
+    switch (s) {
+      case "cyrillic":
+        return t("scriptCyrillic");
+      case "latin-old":
+        return withBadge ? `${t("scriptLatinOld")} (${t("scriptOldBadge")})` : t("scriptLatinOld");
+      case "latin-new":
+        return withBadge ? `${t("scriptLatinNew")} (${t("scriptNewBadge")})` : t("scriptLatinNew");
+    }
+  };
+
+  /* Auto-convert whenever input, fromScript, or toScript changes */
+  useEffect(() => {
+    setOutput(convert(input, fromScript, toScript));
+  }, [input, fromScript, toScript, convert]);
+
+  const closeDonateModal = useCallback(() => {
+    setDonateOpen(false);
+    saveToLocalStorage("converter-donate-last-prompted", String(Date.now()));
   }, []);
 
-  /* Auto-convert whenever input or direction changes */
-  useEffect(() => {
-    setOutput(convert(input, direction));
-  }, [input, direction, convert]);
+  const triggerDonatePrompt = useCallback(() => {
+    const lastPrompted = getFromLocalStorage("converter-donate-last-prompted");
+    const now = Date.now();
+    // 5 kun ichida qayta ko'rsatmaslik
+    const COOLDOWN = 5 * 24 * 60 * 60 * 1000;
+    if (lastPrompted && now - Number(lastPrompted) < COOLDOWN) {
+      return;
+    }
+
+    // Foydalanuvchining nusxalash/yuklab olish harakati tugashi uchun 1.2 soniya kutish
+    setTimeout(() => {
+      setDonateOpen(true);
+      saveToLocalStorage("converter-donate-last-prompted", String(now));
+    }, 1200);
+  }, []);
 
   const handleCopy = useCallback(async () => {
     if (!output.trim()) {
@@ -117,10 +228,11 @@ export function ConverterPage() {
       setCopied(true);
       addToast(t("toastCopied"), "success", 1500);
       setTimeout(() => setCopied(false), 2000);
+      triggerDonatePrompt();
     } else {
       addToast(t("toastCopyError"), "error");
     }
-  }, [output, addToast, t]);
+  }, [output, addToast, t, triggerDonatePrompt]);
 
   const handleDownload = useCallback(() => {
     if (!output.trim()) {
@@ -129,7 +241,8 @@ export function ConverterPage() {
     }
     const base = fileName ? fileName.replace(/\.[^/.]+$/, "") : "converted";
     downloadAsTextFile(output, `${base}_converted.txt`);
-  }, [output, fileName, addToast, t]);
+    triggerDonatePrompt();
+  }, [output, fileName, addToast, t, triggerDonatePrompt]);
 
   const handleClear = useCallback(() => {
     const hadContent =
@@ -138,7 +251,9 @@ export function ConverterPage() {
     const snapshot = {
       input,
       output,
-      direction,
+      fromScript,
+      toScript,
+      autoDetect,
       fileName,
       sourceFile,
       sourceText,
@@ -163,7 +278,9 @@ export function ConverterPage() {
           onClick: () => {
             setInput(snapshot.input);
             setOutput(snapshot.output);
-            setDirection(snapshot.direction);
+            setFromScript(snapshot.fromScript);
+            setToScript(snapshot.toScript);
+            setAutoDetect(snapshot.autoDetect);
             setFileName(snapshot.fileName);
             setSourceFile(snapshot.sourceFile);
             setSourceText(snapshot.sourceText);
@@ -177,7 +294,9 @@ export function ConverterPage() {
   }, [
     input,
     output,
-    direction,
+    fromScript,
+    toScript,
+    autoDetect,
     fileName,
     sourceFile,
     sourceText,
@@ -191,17 +310,23 @@ export function ConverterPage() {
     setSourceFile(file);
     setSourceText(text);
     setFileConverted(null);
-    setDirection(detectDirection(text));
+    if (autoDetect) {
+      const detected = detectScript(text);
+      setFromScript(detected);
+      if (toScript === detected) {
+        setToScript(detected === "cyrillic" ? "latin-new" : "cyrillic");
+      }
+    }
     addToast(t("toastFileLoaded").replace("{name}", file.name), "success", 1500);
   };
 
   useEffect(() => {
     if (!sourceText) return;
     setFileConverting(true);
-    const result = convert(sourceText, direction);
-    setFileConverted({ name: fileName, text: result, direction });
+    const result = convert(sourceText, fromScript, toScript);
+    setFileConverted({ name: fileName, text: result, fromScript, toScript });
     setFileConverting(false);
-  }, [sourceText, direction, fileName, convert]);
+  }, [sourceText, fromScript, toScript, fileName, convert]);
 
   const handleFileClear = () => {
     setFileName("");
@@ -220,14 +345,16 @@ export function ConverterPage() {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
     if (isDocx && sourceFile) {
-      const dir = fileConverted.direction;
+      const from = fileConverted.fromScript;
+      const to = fileConverted.toScript;
       setFileConverting(true);
       try {
         await downloadConvertedDocx(
           sourceFile,
-          (t) => (dir === "cyrillic-to-latin" ? cyrillicToLatin(t) : latinToCyrillic(t)),
+          (t) => convertText(t, from, to),
           `${base}_converted.docx`,
         );
+        triggerDonatePrompt();
       } catch (err) {
         addToast(
           err instanceof Error ? err.message : t("toastFileLoadError"),
@@ -238,6 +365,7 @@ export function ConverterPage() {
       }
     } else {
       downloadAsTextFile(fileConverted.text, `${base}_converted.txt`);
+      triggerDonatePrompt();
     }
   };
 
@@ -544,24 +672,143 @@ export function ConverterPage() {
           ready={!!fileConverted}
           directionLabel={
             fileConverted
-              ? fileConverted.direction === "cyrillic-to-latin"
-                ? locale === "ru"
-                  ? "Кириллица → Латиница"
-                  : locale === "en"
-                  ? "Cyrillic → Latin"
-                  : locale === "uz-cyr"
-                  ? "Кирил → Лотин"
-                  : "Kiril → Lotin"
-                : locale === "ru"
-                ? "Латиница → Кириллица"
-                : locale === "en"
-                ? "Latin → Cyrillic"
-                : locale === "uz-cyr"
-                ? "Лотин → Кирил"
-                : "Lotin → Kiril"
-              : undefined
+              ? `${getScriptTitle(fileConverted.fromScript, false)} → ${getScriptTitle(fileConverted.toScript, false)}`
+              : `${getScriptTitle(fromScript, false)} → ${getScriptTitle(toScript, false)}`
           }
         />
+
+        {/* Script Selection Bar */}
+        <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-2xl p-2 sm:p-2.5 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+            
+            {/* FROM SCRIPT (Left) */}
+            <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto py-0.5 scrollbar-none flex-1">
+              <button
+                type="button"
+                onClick={handleToggleAuto}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1 ${
+                  autoDetect
+                    ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+                title={t("scriptAuto")}
+              >
+                <span>✨</span>
+                <span>{t("scriptAuto")}</span>
+              </button>
+
+              <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 mx-0.5 flex-shrink-0" />
+
+              {/* Cyrillic */}
+              <button
+                type="button"
+                onClick={() => handleSelectFrom("cyrillic")}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  fromScript === "cyrillic"
+                    ? "bg-primary-600 text-white shadow-xs"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+              >
+                {t("scriptCyrillic")}
+              </button>
+
+              {/* Latin Old (1995) */}
+              <button
+                type="button"
+                onClick={() => handleSelectFrom("latin-old")}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1 ${
+                  fromScript === "latin-old"
+                    ? "bg-primary-600 text-white shadow-xs"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+              >
+                <span>{t("scriptLatinOld")}</span>
+                <span className={`text-[10px] font-normal hidden lg:inline ${fromScript === "latin-old" ? "text-primary-100" : "text-gray-400"}`}>
+                  ({t("scriptOldBadge")})
+                </span>
+              </button>
+
+              {/* Latin New */}
+              <button
+                type="button"
+                onClick={() => handleSelectFrom("latin-new")}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1 ${
+                  fromScript === "latin-new"
+                    ? "bg-primary-600 text-white shadow-xs"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+              >
+                <span>{t("scriptLatinNew")}</span>
+                <span className={`text-[10px] font-normal hidden lg:inline ${fromScript === "latin-new" ? "text-primary-100" : "text-gray-400"}`}>
+                  ({t("scriptNewBadge")})
+                </span>
+              </button>
+            </div>
+
+            {/* SWAP BUTTON (Center) */}
+            <div className="flex items-center justify-center">
+              <button
+                type="button"
+                onClick={handleSwap}
+                title={t("scriptSwap")}
+                aria-label={t("scriptSwap")}
+                className="p-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-primary-50 dark:hover:bg-primary-950/40 hover:text-primary-600 dark:hover:text-primary-400 text-gray-700 dark:text-gray-300 transition-all active:scale-95 flex items-center gap-1.5 border border-transparent hover:border-primary-200 dark:hover:border-primary-800"
+              >
+                <ArrowLeftRight size={15} />
+                <span className="text-xs font-bold sm:hidden">{t("scriptSwap")}</span>
+              </button>
+            </div>
+
+            {/* TO SCRIPT (Right) */}
+            <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto py-0.5 scrollbar-none flex-1 justify-start sm:justify-end">
+              {/* Cyrillic */}
+              <button
+                type="button"
+                onClick={() => handleSelectTo("cyrillic")}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  toScript === "cyrillic"
+                    ? "bg-primary-600 text-white shadow-xs"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+              >
+                {t("scriptCyrillic")}
+              </button>
+
+              {/* Latin Old (1995) */}
+              <button
+                type="button"
+                onClick={() => handleSelectTo("latin-old")}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1 ${
+                  toScript === "latin-old"
+                    ? "bg-primary-600 text-white shadow-xs"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+              >
+                <span>{t("scriptLatinOld")}</span>
+                <span className={`text-[10px] font-normal hidden lg:inline ${toScript === "latin-old" ? "text-primary-100" : "text-gray-400"}`}>
+                  ({t("scriptOldBadge")})
+                </span>
+              </button>
+
+              {/* Latin New */}
+              <button
+                type="button"
+                onClick={() => handleSelectTo("latin-new")}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1 ${
+                  toScript === "latin-new"
+                    ? "bg-primary-600 text-white shadow-xs"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+              >
+                <span>{t("scriptLatinNew")}</span>
+                <span className={`text-[10px] font-normal hidden lg:inline ${toScript === "latin-new" ? "text-primary-100" : "text-gray-400"}`}>
+                  ({t("scriptNewBadge")})
+                </span>
+              </button>
+            </div>
+
+          </div>
+        </div>
 
         {/* Two-panel converter */}
         <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden border border-gray-300 dark:border-gray-600 shadow-sm divide-y md:divide-y-0 md:divide-x divide-gray-300 dark:divide-gray-600">
@@ -570,9 +817,16 @@ export function ConverterPage() {
           <div className="flex flex-col bg-white dark:bg-gray-900">
             {/* Panel header */}
             <div className="h-16 flex items-center justify-between px-4 border-b border-gray-300 dark:border-gray-700">
-              <span className="text-sm font-bold tracking-wide uppercase text-gray-700 dark:text-gray-300">
-                {t("panelInputHeader")}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-bold tracking-wide uppercase text-gray-800 dark:text-gray-200">
+                  {getScriptTitle(fromScript)}
+                </span>
+                {autoDetect && (
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                    {t("scriptAuto")}
+                  </span>
+                )}
+              </div>
               <button
                 onClick={handleClear}
                 title={`${t("panelInputClear")} (Ctrl+K)`}
@@ -601,8 +855,8 @@ export function ConverterPage() {
           <div className="flex flex-col bg-gray-50/60 dark:bg-gray-900/60">
             {/* Panel header */}
             <div className="h-16 flex items-center justify-between px-4 border-b border-gray-300 dark:border-gray-700">
-              <span className="text-sm font-bold tracking-wide uppercase text-gray-700 dark:text-gray-300">
-                {t("panelOutputHeader")}
+              <span className="text-xs sm:text-sm font-bold tracking-wide uppercase text-gray-800 dark:text-gray-200">
+                {getScriptTitle(toScript)}
               </span>
               <div className="flex items-center gap-1.5">
                 {/* Copy */}
@@ -841,37 +1095,125 @@ export function ConverterPage() {
       {donateOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          onClick={() => setDonateOpen(false)}
+          onClick={closeDonateModal}
         >
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
           <div
-            className="relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 flex flex-col items-center text-center gap-4"
+            className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 sm:p-7 flex flex-col items-center text-center gap-5"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setDonateOpen(false)}
+              onClick={closeDonateModal}
               className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label={t("modalClose")}
             >
               <X size={18} />
             </button>
             <div className="text-4xl">💛</div>
             <div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t("modalDonateTitle")}</h2>
-              <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                 {t("modalDonateDesc")}
               </p>
             </div>
-            <a
-              href="https://tirikchilik.uz/shohruzisroilov"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setDonateOpen(false)}
-              className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-semibold shadow-md transition-colors"
+
+            {/* Bank Card Component */}
+            <div
+              onClick={handleCopyCard}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCopyCard();
+                }
+              }}
+              title={cardCopied ? t("modalDonateCopied") : t("modalDonateCopy")}
+              className="w-full relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl border border-indigo-500/20 cursor-pointer group text-left transition-all hover:border-indigo-500/40 active:scale-[0.99]"
             >
-              <span>{t("modalDonateButton")}</span>
-              <span aria-hidden="true">↗</span>
-            </a>
-            <p className="text-xs text-gray-400 dark:text-gray-500">{t("modalDonateHolder")}</p>
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/20 rounded-full blur-2xl pointer-events-none group-hover:bg-primary-500/30 transition-colors" />
+              <div className="absolute -bottom-8 -left-8 w-28 h-28 bg-blue-500/10 rounded-full blur-xl pointer-events-none" />
+
+              <div className="flex items-center justify-between mb-4 relative z-10">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-6 rounded bg-gradient-to-tr from-amber-300 via-yellow-200 to-amber-400 p-[1px] shadow-sm flex items-center justify-center">
+                    <div className="w-full h-full rounded-[3px] border border-amber-600/40 grid grid-cols-2 gap-0.5 p-0.5 opacity-85">
+                      <div className="border border-amber-700/30 rounded-sm" />
+                      <div className="border border-amber-700/30 rounded-sm" />
+                      <div className="border border-amber-700/30 rounded-sm" />
+                      <div className="border border-amber-700/30 rounded-sm" />
+                    </div>
+                  </div>
+                  <CreditCard className="w-4 h-4 text-gray-300 opacity-60" />
+                </div>
+                <span className="text-xs font-black tracking-widest text-amber-300 font-mono">HUMO</span>
+              </div>
+
+              <div className="relative z-10 mb-4">
+                <p className="text-[10px] uppercase tracking-wider text-gray-400 font-medium mb-1">
+                  {t("modalDonateCardLabel")}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-lg sm:text-xl font-bold tracking-widest text-white selection:bg-primary-500">
+                    9860 1901 1079 9466
+                  </span>
+                  <span className="p-1.5 rounded-lg bg-white/10 group-hover:bg-white/20 text-gray-200 group-hover:text-white transition-all ml-2">
+                    {cardCopied ? (
+                      <Check className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-end justify-between relative z-10 pt-2 border-t border-white/10">
+                <div>
+                  <p className="text-[9px] uppercase tracking-wider text-gray-400 font-medium">
+                    {t("modalDonateCardHolderLabel")}
+                  </p>
+                  <p className="text-xs sm:text-sm font-semibold tracking-wider text-gray-100 uppercase">
+                    Shohruz Isroilov
+                  </p>
+                </div>
+                <span className="text-[11px] text-gray-300 group-hover:text-primary-300 transition-colors font-medium flex items-center gap-1">
+                  {cardCopied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400">{t("modalDonateCopied")}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>{t("modalDonateCopy")}</span>
+                    </>
+                  )}
+                </span>
+              </div>
+            </div>
+
+            {/* Copy Button */}
+            <button
+              type="button"
+              onClick={handleCopyCard}
+              className={`w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold shadow-md transition-all active:scale-[0.99] ${
+                cardCopied
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                  : "bg-primary-600 hover:bg-primary-700 text-white"
+              }`}
+            >
+              {cardCopied ? (
+                <>
+                  <Check size={18} />
+                  <span>{t("modalDonateCopied")}</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={18} />
+                  <span>{t("modalDonateButton")}</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}

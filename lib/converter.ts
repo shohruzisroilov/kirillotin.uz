@@ -58,7 +58,18 @@ export function cyrillicToLatin(text: string): string {
   let result = "";
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
-    result += cyrillicToLatinMap[ch] ?? ch;
+    let lat = cyrillicToLatinMap[ch] ?? ch;
+    // If multi-char mapping and in uppercase context, make all letters uppercase (e.g. SH, CH, TS, YO, YU, YA)
+    if (lat.length > 1 && ch >= "А" && ch <= "Я") {
+      const next = text[i + 1];
+      const prev = text[i - 1];
+      const isNextUpper = !!next && /[А-ЯЁЎҚҒҲA-Z]/.test(next);
+      const isPrevUpper = !!prev && /[А-ЯЁЎҚҒҲA-Z]/.test(prev);
+      if (isNextUpper || isPrevUpper) {
+        lat = lat.toUpperCase();
+      }
+    }
+    result += lat;
   }
   return result;
 }
@@ -119,4 +130,106 @@ export function latinToCyrillic(text: string): string {
   }
 
   return result;
+}
+
+// ─── Three Scripts Support ───────────────────────────────────────────────────
+
+export type Script = "cyrillic" | "latin-old" | "latin-new";
+
+export function detectScript(text: string): Script {
+  if (isCyrillic(text)) {
+    return "cyrillic";
+  }
+  // Check for characters specific to new Latin (Ö, ö, Ğ, ğ, Ş, ş, Ç, ç)
+  if (/[öÖğĞşŞçÇ]/.test(text)) {
+    return "latin-new";
+  }
+  return "latin-old";
+}
+
+// ─── Latin Old ↔ Latin New ───────────────────────────────────────────────────
+
+export function latinOldToLatinNew(text: string): string {
+  // 1. G' and O' variants with all types of apostrophes/modifiers:
+  // ' (U+0027), ʻ (U+02BB), ’ (U+2019), ‘ (U+2018), ` (U+0060), ʼ (U+02BC)
+  let result = text
+    .replace(/G['ʻ’‘`ʼ]/g, "Ğ")
+    .replace(/g['ʻ’‘`ʼ]/g, "ğ")
+    .replace(/O['ʻ’‘`ʼ]/g, "Ö")
+    .replace(/o['ʻ’‘`ʼ]/g, "ö");
+
+  // 2. SH / Sh / sh
+  result = result
+    .replace(/SH/g, "Ş")
+    .replace(/Sh/g, "Ş")
+    .replace(/sh/g, "ş");
+
+  // 3. CH / Ch / ch
+  result = result
+    .replace(/CH/g, "Ç")
+    .replace(/Ch/g, "Ç")
+    .replace(/ch/g, "ç");
+
+  return result;
+}
+
+export function latinNewToLatinOld(text: string): string {
+  let result = "";
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === "Ğ") {
+      result += "Gʻ";
+    } else if (ch === "ğ") {
+      result += "gʻ";
+    } else if (ch === "Ö") {
+      result += "Oʻ";
+    } else if (ch === "ö") {
+      result += "oʻ";
+    } else if (ch === "Ş") {
+      const next = text[i + 1];
+      const prev = text[i - 1];
+      const isNextUpper = next && /[A-Z]/.test(next);
+      const isPrevUpper = prev && /[A-Z]/.test(prev);
+      result += isNextUpper || isPrevUpper ? "SH" : "Sh";
+    } else if (ch === "ş") {
+      result += "sh";
+    } else if (ch === "Ç") {
+      const next = text[i + 1];
+      const prev = text[i - 1];
+      const isNextUpper = next && /[A-Z]/.test(next);
+      const isPrevUpper = prev && /[A-Z]/.test(prev);
+      result += isNextUpper || isPrevUpper ? "CH" : "Ch";
+    } else if (ch === "ç") {
+      result += "ch";
+    } else {
+      result += ch;
+    }
+  }
+  return result;
+}
+
+// ─── Universal Converter (Any Script to Any Script) ──────────────────────────
+
+export function convertText(text: string, from: Script, to: Script): string {
+  if (!text || from === to) return text;
+
+  // 1. From Cyrillic
+  if (from === "cyrillic") {
+    const oldLat = cyrillicToLatin(text);
+    return to === "latin-old" ? oldLat : latinOldToLatinNew(oldLat);
+  }
+
+  // 2. From Latin Old
+  if (from === "latin-old") {
+    if (to === "cyrillic") return latinToCyrillic(text);
+    if (to === "latin-new") return latinOldToLatinNew(text);
+  }
+
+  // 3. From Latin New
+  if (from === "latin-new") {
+    const oldLat = latinNewToLatinOld(text);
+    return to === "latin-old" ? oldLat : latinToCyrillic(oldLat);
+  }
+
+  return text;
 }

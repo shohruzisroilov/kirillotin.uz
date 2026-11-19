@@ -20,6 +20,10 @@ import { UzbekAlifbosiQoidalari } from "@/components/posts/UzbekAlifbosiQoidalar
 import { TxtFaylKonvertatsiya } from "@/components/posts/TxtFaylKonvertatsiya";
 import { KirilLotinFarqi } from "@/components/posts/KirilLotinFarqi";
 import { TransliteratsiyaNima } from "@/components/posts/TransliteratsiyaNima";
+import { LotinAlifbosiIslohoti } from "@/components/posts/LotinAlifbosiIslohoti";
+import { SuniyIntellektOzbekTili } from "@/components/posts/SuniyIntellektOzbekTili";
+import { DavlatIshYuritishLotin } from "@/components/posts/DavlatIshYuritishLotin";
+import { SeoGoogleKirilLotin } from "@/components/posts/SeoGoogleKirilLotin";
 
 export const posts: Post[] = [
   {
@@ -172,6 +176,71 @@ export const posts: Post[] = [
       "ўзбек транслитерация",
     ],
     content: TransliteratsiyaNima,
+  },
+  {
+    slug: "yangi-lotin-alifbosi-islohoti",
+    title: "Ўзбек лотин алифбосидаги янги ислоҳот: қандай ўзгаришлар кутилмоқда?",
+    description:
+      "Ўзбек лотин алифбосидаги кутилаётган янги ҳарфлар (Ö, Ğ, Ş, Ç), апостроф ва диграфларнинг ўзгариши, рақамли мослашув ва келажакдаги истиқболлар.",
+    date: "2026-11-10",
+    readingMinutes: 7,
+    keywords: [
+      "янги ўзбек алифбоси",
+      "ўзбек лотин ислоҳоти",
+      "yangi uzbek alifbosi",
+      "o'zbek lotin islohoti",
+      "lotin harflari ozgarishi",
+      "yangi harflar uzbek",
+    ],
+    content: LotinAlifbosiIslohoti,
+  },
+  {
+    slug: "suniy-intellekt-va-ozbek-tili",
+    title: "Сунъий интеллект (AI) ва ўзбек тили: кирил ёки лотин қай бирида афзал?",
+    description:
+      "ChatGPT, Gemini ва Claude каби AI моделларининг ўзбек тилида ишлаши: токенизация, апостроф муаммолари, кирил ва лотин ёзувидаги фарқлар.",
+    date: "2026-11-12",
+    readingMinutes: 6,
+    keywords: [
+      "сунъий интеллект ўзбек тили",
+      "chatgpt ozbekcha",
+      "ai kiril lotin",
+      "uzbek language llm",
+      "o'zbekcha ai modellar",
+    ],
+    content: SuniyIntellektOzbekTili,
+  },
+  {
+    slug: "davlat-tilida-ish-yuritish-lotin-yozuvi",
+    title: "Давлат тилида иш юритиш ва электрон ҳужжатлар: тўлиқ лотин ёзувига ўтиш талаблари",
+    description:
+      "Ijro.gov.uz, E-qaror ва давлат ташкилотларида лотин ёзувида иш юритиш қоидалари, кўп учрайдиган хатолар ва Word ҳужжатларни тўғри ўгириш.",
+    date: "2026-11-15",
+    readingMinutes: 6,
+    keywords: [
+      "давлат тилида иш юритиш",
+      "ijro gov uz lotin",
+      "e qaror lotin yozuvi",
+      "rasmiy hujjatlar lotin",
+      "ish yuritish lotin",
+    ],
+    content: DavlatIshYuritishLotin,
+  },
+  {
+    slug: "seo-google-kiril-yoki-lotin",
+    title: "Google ва SEO: Ўзбекистонда сайтларни кирилда ёки лотинда юритиш керакми?",
+    description:
+      "Ўзбекистон интернет бозорида қидирув сўровлари статистикаси, Google ва Yandex қидируви, сайтингизда икки ёзувни тўғри юритиш бўйича SEO қўлланма.",
+    date: "2026-11-18",
+    readingMinutes: 6,
+    keywords: [
+      "seo ozbekiston",
+      "google kiril yoki lotin",
+      "saytni lotinda yoki kirilda yuritish",
+      "uzbekistan seo strategiya",
+      "sayt qidiruv tizimlari",
+    ],
+    content: SeoGoogleKirilLotin,
   },
 ];
 

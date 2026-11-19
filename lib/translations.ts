@@ -81,6 +81,14 @@ export interface TranslationDict {
   seoHistoryEyebrow: string;
   seoHistoryTitle: string;
   
+  scriptCyrillic: string;
+  scriptLatinOld: string;
+  scriptLatinNew: string;
+  scriptAuto: string;
+  scriptSwap: string;
+  scriptOldBadge: string;
+  scriptNewBadge: string;
+
   modalDonateTitle: string;
   modalDonateDesc: string;
   modalDonateCopy: string;
@@ -88,6 +96,8 @@ export interface TranslationDict {
   modalDonateCopiedToast: string;
   modalDonateHolder: string;
   modalDonateButton: string;
+  modalDonateCardLabel: string;
+  modalDonateCardHolderLabel: string;
   modalContactTitle: string;
   modalContactDesc: string;
   modalContactLink: string;
@@ -189,13 +199,22 @@ export const translations: Record<Locale, TranslationDict> = {
     seoRulesTitle: "Кирил ва Лотин ёзув қоидалари",
     seoHistoryEyebrow: "Тарих",
     seoHistoryTitle: "Ўзбек ёзуви ҳақида",
+    scriptCyrillic: "Кирилл",
+    scriptLatinOld: "Эски лотин",
+    scriptLatinNew: "Янги лотин",
+    scriptAuto: "Авто аниқлаш",
+    scriptSwap: "Алмаштириш",
+    scriptOldBadge: "Oʻ, Gʻ, Sh, Ch",
+    scriptNewBadge: "Ö, Ğ, Ş, Ç",
     modalDonateTitle: "Лойиҳани қўллаб-қувватланг",
-    modalDonateDesc: "Агар ушбу конвертор сизнинг ишингизни осонлаштирган бўлса, лойиҳани ихтиёрий донат орқали қўллаб-қувватлашингиз мумкин. Йиғилган маблағлар сервер харажатлари ва янги функциялар қўшишга сарфланади.",
-    modalDonateCopy: "Нусхалаш",
+    modalDonateDesc: "Сайтимиз доимий ишлаши учун кетадиган харажатларни қоплаш учун донат қилинг.",
+    modalDonateCopy: "Нусха олиш",
     modalDonateCopied: "Нусхаланди!",
     modalDonateCopiedToast: "Карта рақами нусхаланди",
-    modalDonateHolder: "tirikchilik.uz/shohruzisroilov",
-    modalDonateButton: "Tirikchilik орқали донат қилиш",
+    modalDonateHolder: "Шоҳруз Исроилов",
+    modalDonateButton: "Карта рақамини нусхалаш",
+    modalDonateCardLabel: "Humo карта рақами",
+    modalDonateCardHolderLabel: "Карта эгаси",
     modalContactTitle: "Боғланиш",
     modalContactDesc: "Агар сизда сайт бўйича таклифлар бўлса ёки веб-сайтлар ва мобил иловалар ишлаб чиқиш бўйича ҳамкорлик қилмоқчи бўлсангиз, мен билан боғланишингиз мумкин:",
     modalContactLink: "Телеграм орқали ёзиш",
@@ -294,13 +313,22 @@ export const translations: Record<Locale, TranslationDict> = {
     seoRulesTitle: "Kiril va Lotin yozuv qoidalari",
     seoHistoryEyebrow: "Tarix",
     seoHistoryTitle: "O'zbek yozuvi haqida",
+    scriptCyrillic: "Kirill",
+    scriptLatinOld: "Eski lotin",
+    scriptLatinNew: "Yangi lotin",
+    scriptAuto: "Avto aniqlash",
+    scriptSwap: "Almashtirish",
+    scriptOldBadge: "Oʻ, Gʻ, Sh, Ch",
+    scriptNewBadge: "Ö, Ğ, Ş, Ç",
     modalDonateTitle: "Loyihani qo'llab-quvvatlash",
-    modalDonateDesc: "Agar ushbu konvertor sizning ishingizni osonlashtirgan bo'lsa, loyihani ixtiyoriy donat orqali qo'llab-quvvatlashingiz mumkin. Yig'ilgan mablag'lar server xarajatlari va yeni funksiyalar qo'shishga sarflanadi.",
+    modalDonateDesc: "Saytimiz doimiy ishlashi uchun ketadigan xarajatlarni qoplash uchun donat qiling.",
     modalDonateCopy: "Nusxa olish",
     modalDonateCopied: "Nusxalandi!",
     modalDonateCopiedToast: "Karta raqami nusxalandi",
-    modalDonateHolder: "tirikchilik.uz/shohruzisroilov",
-    modalDonateButton: "Tirikchilik orqali donat qilish",
+    modalDonateHolder: "Shohruz Isroilov",
+    modalDonateButton: "Karta raqamini nusxalash",
+    modalDonateCardLabel: "Humo karta raqami",
+    modalDonateCardHolderLabel: "Karta egasi",
     modalContactTitle: "Bog'lanish",
     modalContactDesc: "Agar sizda sayt bo'yicha takliflar bo'lsa yoki veb-saytlar va mobil ilovalar ishlab chiqish bo'yicha hamkorlik qilmoqchi bo'lsangiz, men bilan bog'lanishingiz mumkin:",
     modalContactLink: "Telegram orqali yozish",
@@ -399,13 +427,22 @@ export const translations: Record<Locale, TranslationDict> = {
     seoRulesTitle: "Правила написания Кириллицы и Латиницы",
     seoHistoryEyebrow: "История",
     seoHistoryTitle: "Об узбекской письменности",
+    scriptCyrillic: "Кириллица",
+    scriptLatinOld: "Старая латиница",
+    scriptLatinNew: "Новая латиница",
+    scriptAuto: "Автоопределение",
+    scriptSwap: "Поменять местами",
+    scriptOldBadge: "Oʻ, Gʻ, Sh, Ch",
+    scriptNewBadge: "Ö, Ğ, Ş, Ç",
     modalDonateTitle: "Поддержка проекта",
-    modalDonateDesc: "Если этот конвертер облегчил вашу работу, вы можете поддержать проект добровольным пожертвованием. Собранные средства идут на покрытие расходов на сервер и добавление новых функций.",
+    modalDonateDesc: "Поддержите сайт донатом для покрытия расходов на его постоянную и бесперебойную работу.",
     modalDonateCopy: "Копировать",
     modalDonateCopied: "Скопировано!",
     modalDonateCopiedToast: "Номер карты скопирован",
-    modalDonateHolder: "tirikchilik.uz/shohruzisroilov",
-    modalDonateButton: "Поддержать через Tirikchilik",
+    modalDonateHolder: "Shohruz Isroilov",
+    modalDonateButton: "Скопировать номер карты",
+    modalDonateCardLabel: "Номер карты Humo",
+    modalDonateCardHolderLabel: "Владелец карты",
     modalContactTitle: "Контакты",
     modalContactDesc: "Если у вас есть предложения по улучшению сайта или вы хотите сотрудничать по разработке веб-сайтов и мобильных приложений, вы можете связаться со мной:",
     modalContactLink: "Написать в Telegram",
@@ -504,13 +541,22 @@ export const translations: Record<Locale, TranslationDict> = {
     seoRulesTitle: "Cyrillic and Latin Spelling Rules",
     seoHistoryEyebrow: "History",
     seoHistoryTitle: "About Uzbek Writing",
+    scriptCyrillic: "Cyrillic",
+    scriptLatinOld: "Old Latin",
+    scriptLatinNew: "New Latin",
+    scriptAuto: "Auto detect",
+    scriptSwap: "Swap",
+    scriptOldBadge: "Oʻ, Gʻ, Sh, Ch",
+    scriptNewBadge: "Ö, Ğ, Ş, Ç",
     modalDonateTitle: "Support the Project",
-    modalDonateDesc: "If this converter has made your work easier, you can support the project with a voluntary donation. The collected funds will go toward covering server costs and adding new features.",
+    modalDonateDesc: "Please consider donating to help cover expenses and keep the site running continuously.",
     modalDonateCopy: "Copy",
     modalDonateCopied: "Copied!",
     modalDonateCopiedToast: "Card number copied",
-    modalDonateHolder: "tirikchilik.uz/shohruzisroilov",
-    modalDonateButton: "Donate via Tirikchilik",
+    modalDonateHolder: "Shohruz Isroilov",
+    modalDonateButton: "Copy card number",
+    modalDonateCardLabel: "Humo card number",
+    modalDonateCardHolderLabel: "Cardholder",
     modalContactTitle: "Contact",
     modalContactDesc: "If you have suggestions for the site or wish to cooperate on web/mobile development, feel free to contact me:",
     modalContactLink: "Message on Telegram",
