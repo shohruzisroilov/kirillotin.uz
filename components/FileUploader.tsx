@@ -115,7 +115,7 @@ export function FileUploader({
       />
 
       {currentFileName ? (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/60 rounded-xl sm:rounded-2xl shadow-subtle animate-fade-in">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/60 rounded-xl sm:rounded-2xl shadow-subtle animate-fade-in min-w-0 w-full">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div className="w-8 h-8 rounded-lg bg-primary-500/10 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 flex items-center justify-center flex-shrink-0">
               <FileText className="w-4 h-4" />
@@ -185,7 +185,7 @@ export function FileUploader({
               fileInputRef.current?.click();
             }
           }}
-          className={`group relative overflow-hidden rounded-xl sm:rounded-2xl border border-dashed py-2 px-3 sm:py-2.5 sm:px-4 text-center cursor-pointer transition-all duration-200 ${
+          className={`group relative overflow-hidden rounded-xl sm:rounded-2xl border border-dashed py-2 px-3 sm:py-2.5 sm:px-4 text-center cursor-pointer transition-all duration-200 min-w-0 w-full ${
             isDragging
               ? "border-primary-500 bg-primary-50/60 dark:bg-primary-950/30 scale-[1.005]"
               : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:border-primary-400/80 dark:hover:border-primary-600 hover:bg-slate-50/80 dark:hover:bg-slate-900"

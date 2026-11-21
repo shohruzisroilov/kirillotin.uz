@@ -491,19 +491,19 @@ export function ConverterPage() {
   const featuredPosts = posts.slice(0, 3);
 
   return (
-    <div className="bg-slate-50 dark:bg-[#0B1120] text-slate-800 dark:text-slate-100 flex flex-col min-h-screen">
+    <div className="bg-slate-50 dark:bg-[#0B1120] text-slate-800 dark:text-slate-100 flex flex-col min-h-screen w-full max-w-full overflow-x-hidden">
       
       {/* ─────────────────────────────────────────────────────────────
           A. NAVIGATION / HEADER
       ───────────────────────────────────────────────────────────── */}
       <header
-        className={`sticky top-0 z-40 transition-all duration-200 border-b ${
+        className={`sticky top-0 z-40 transition-all duration-200 border-b w-full max-w-full overflow-hidden ${
           scrolled
             ? "border-slate-200/80 dark:border-slate-800/80 bg-white/85 dark:bg-[#0B1120]/85 backdrop-blur-md shadow-card"
             : "border-transparent bg-white/60 dark:bg-[#0B1120]/60 backdrop-blur-sm"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-1.5 sm:gap-4 min-w-0">
           
           {/* Brand Logo */}
           <Link
@@ -514,20 +514,20 @@ export function ConverterPage() {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
-            className="flex items-center gap-2.5 select-none group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 rounded-xl py-1"
+            className="flex items-center gap-2 select-none group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 rounded-xl py-1 min-w-0 flex-shrink"
           >
-            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-subtle group-hover:scale-105 smooth-transition flex-shrink-0">
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-subtle group-hover:scale-105 smooth-transition flex-shrink-0">
               <img
                 src="/logo.png"
                 alt="Kirilllotin.uz logo"
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
+            <div className="flex flex-col leading-none min-w-0">
+              <span className="text-base sm:text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1 whitespace-nowrap">
                 Kirill <span className="text-primary-500 font-bold" aria-hidden="true">↔</span> Lotin
               </span>
-              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">
+              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider hidden xs:block">
                 kirillotin.uz
               </span>
             </div>
@@ -584,16 +584,17 @@ export function ConverterPage() {
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             
             {/* Donat Button */}
             <button
               type="button"
               onClick={() => setDonateOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white text-xs sm:text-sm font-bold shadow-subtle smooth-transition"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white text-xs sm:text-sm font-bold shadow-subtle smooth-transition"
+              aria-label={t("navDonate")}
             >
-              <Heart size={14} className="fill-white text-white" />
-              <span>{t("navDonate")}</span>
+              <Heart size={13} className="fill-white text-white flex-shrink-0" />
+              <span className="hidden xs:inline">{t("navDonate")}</span>
             </button>
 
             {/* Language Selector Dropdown */}
@@ -602,11 +603,11 @@ export function ConverterPage() {
                 <button
                   type="button"
                   onClick={() => setLangOpen(!langOpen)}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold smooth-transition focus:outline-none"
+                  className="inline-flex items-center gap-1 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold smooth-transition focus:outline-none"
                   aria-label="Tilni tanlash"
                 >
-                  <Globe size={14} className="text-slate-400 dark:text-slate-500" />
-                  <span>
+                  <Globe size={13} className="text-slate-400 dark:text-slate-500 flex-shrink-0" />
+                  <span className="uppercase text-[11px] sm:text-xs font-bold">
                     {locale === "uz-lat"
                       ? "uz"
                       : locale === "uz-cyr"
@@ -616,7 +617,7 @@ export function ConverterPage() {
                       : "en"}
                   </span>
                   <ChevronDown
-                    size={12}
+                    size={11}
                     className={`text-slate-400 transition-transform duration-200 ${
                       langOpen ? "rotate-180" : ""
                     }`}
@@ -669,9 +670,9 @@ export function ConverterPage() {
                 onClick={toggleTheme}
                 aria-label={theme === "light" ? t("themeToggleDark") : t("themeToggleLight")}
                 title={theme === "light" ? t("themeToggleDark") : t("themeToggleLight")}
-                className="w-9 h-9 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 smooth-transition focus:outline-none"
+                className="w-8 h-8 sm:w-9 sm:h-9 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 smooth-transition focus:outline-none flex-shrink-0"
               >
-                {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+                {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
               </button>
             )}
 
@@ -679,10 +680,10 @@ export function ConverterPage() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-9 h-9 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none"
+              className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none flex-shrink-0"
               aria-label="Menyu"
             >
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
             </button>
           </div>
         </div>
@@ -748,14 +749,14 @@ export function ConverterPage() {
       {/* ─────────────────────────────────────────────────────────────
           MAIN CONTENT AREA
       ───────────────────────────────────────────────────────────── */}
-      <main id="main" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 space-y-3.5">
+      <main id="main" className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4 space-y-3.5 min-w-0">
 
         {/* ─────────────────────────────────────────────────────────
             B. HERO SECTION (Compact & Focused)
         ───────────────────────────────────────────────────────── */}
-        <section aria-labelledby="hero-heading" className="pt-0.5 pb-0.5 relative">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
-            <div className="text-left max-w-2xl">
+        <section aria-labelledby="hero-heading" className="pt-0.5 pb-0.5 relative w-full min-w-0">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 min-w-0">
+            <div className="text-left max-w-2xl min-w-0">
               <h1
                 id="hero-heading"
                 className="text-lg sm:text-2xl md:text-[30px] font-black tracking-tight text-slate-900 dark:text-white leading-tight"
@@ -781,7 +782,7 @@ export function ConverterPage() {
         {/* ─────────────────────────────────────────────────────────
             FILE UPLOADER SECTION (Compact & Elegant)
         ───────────────────────────────────────────────────────── */}
-        <section aria-labelledby="uploader-heading">
+        <section aria-labelledby="uploader-heading" className="w-full min-w-0">
           <FileUploader
             onFileSelected={handleFileSelected}
             onFileClear={handleFileClear}
@@ -796,17 +797,17 @@ export function ConverterPage() {
         {/* ─────────────────────────────────────────────────────────
             C. WRITING-SYSTEM CONTROL BAR (Reference Screenshot Top Bar)
         ───────────────────────────────────────────────────────── */}
-        <section aria-label="Yozuv tizimini tanlash" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-card">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+        <section aria-label="Yozuv tizimini tanlash" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-card w-full max-w-full min-w-0 overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 w-full min-w-0">
             
             {/* Left Writing System Pills */}
-            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-0.5 scrollbar-none flex-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-0.5 scrollbar-none w-full sm:flex-1 min-w-0">
               
               {/* Kirill Button */}
               <button
                 type="button"
                 onClick={() => handleSelectFrom("cyrillic")}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold smooth-transition whitespace-nowrap ${
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-bold smooth-transition whitespace-nowrap flex-shrink-0 ${
                   fromScript === "cyrillic"
                     ? "bg-primary-600 text-white shadow-subtle"
                     : "bg-slate-100/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700"
@@ -829,7 +830,7 @@ export function ConverterPage() {
               <button
                 type="button"
                 onClick={() => handleSelectFrom("latin-old")}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold smooth-transition whitespace-nowrap ${
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-bold smooth-transition whitespace-nowrap flex-shrink-0 ${
                   fromScript === "latin-old"
                     ? "bg-primary-600 text-white shadow-subtle"
                     : "bg-slate-100/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700"
@@ -852,7 +853,7 @@ export function ConverterPage() {
               <button
                 type="button"
                 onClick={() => handleSelectFrom("latin-new")}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold smooth-transition whitespace-nowrap ${
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-bold smooth-transition whitespace-nowrap flex-shrink-0 ${
                   fromScript === "latin-new"
                     ? "bg-primary-600 text-white shadow-subtle"
                     : "bg-slate-100/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700"
@@ -873,16 +874,16 @@ export function ConverterPage() {
             </div>
 
             {/* Right Controls: Swap & Auto-detect Switch */}
-            <div className="flex items-center justify-between sm:justify-end gap-3 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800 w-full sm:w-auto min-w-0">
               
               {/* Swap Button */}
               <button
                 type="button"
                 onClick={handleSwap}
                 title={t("scriptSwap")}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-slate-800 smooth-transition active:scale-95"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-slate-800 smooth-transition active:scale-95"
               >
-                <ArrowLeftRight size={15} />
+                <ArrowLeftRight size={14} />
                 <span>{t("scriptSwap")}</span>
               </button>
 
@@ -922,14 +923,14 @@ export function ConverterPage() {
         {/* ─────────────────────────────────────────────────────────
             D. MAIN TWO-PANEL TEXT CONVERTER (Centerpiece)
         ───────────────────────────────────────────────────────── */}
-        <section aria-label="Asosiy konvertor" className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5">
+        <section aria-label="Asosiy konvertor" className="relative w-full max-w-full min-w-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 w-full min-w-0">
 
             {/* ───────── LEFT PANEL (KIRITISH) ───────── */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-card flex flex-col focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-400 dark:focus-within:border-primary-600 smooth-transition overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-card flex flex-col focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-400 dark:focus-within:border-primary-600 smooth-transition overflow-hidden w-full min-w-0">
               
               {/* Left Header */}
-              <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 bg-slate-50/50 dark:bg-slate-900/50">
+              <div className="px-3 sm:px-4 py-2 sm:py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-1.5 sm:gap-2 bg-slate-50/50 dark:bg-slate-900/50 min-w-0">
                 
                 {/* Script Selector Pill / Dropdown */}
                 <div className="relative">
@@ -972,7 +973,7 @@ export function ConverterPage() {
                 </div>
 
                 {/* Counters & Trash Action */}
-                <div className="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs font-medium text-slate-400 dark:text-slate-500">
+                <div className="flex items-center gap-1.5 sm:gap-3 text-[10px] sm:text-xs font-medium text-slate-400 dark:text-slate-500 flex-shrink-0">
                   <span className="tabular-nums">
                     {input.length.toLocaleString()} {t("panelCharCount")}
                   </span>
@@ -987,7 +988,7 @@ export function ConverterPage() {
                     className="p-1 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 smooth-transition"
                     aria-label={t("panelQuickClear")}
                   >
-                    <Trash2 size={15} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
 
@@ -1005,7 +1006,7 @@ export function ConverterPage() {
               </div>
 
               {/* Left Footer */}
-              <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 bg-slate-50/50 dark:bg-slate-900/50">
+              <div className="px-3 sm:px-4 py-2 sm:py-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-1.5 sm:gap-2 bg-slate-50/50 dark:bg-slate-900/50 min-w-0">
                 
                 {/* Paste shortcut / action */}
                 <button
@@ -1059,10 +1060,10 @@ export function ConverterPage() {
             </div>
 
             {/* ───────── RIGHT PANEL (NATIJA) ───────── */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-card flex flex-col focus-within:ring-2 focus-within:ring-primary-500/20 smooth-transition overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-card flex flex-col focus-within:ring-2 focus-within:ring-primary-500/20 smooth-transition overflow-hidden w-full min-w-0">
               
               {/* Right Header */}
-              <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 bg-slate-50/50 dark:bg-slate-900/50">
+              <div className="px-3 sm:px-4 py-2 sm:py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-1.5 sm:gap-2 bg-slate-50/50 dark:bg-slate-900/50 min-w-0">
                 
                 {/* Script Selector Pill / Dropdown */}
                 <div className="relative">
@@ -1105,7 +1106,7 @@ export function ConverterPage() {
                 </div>
 
                 {/* Counters & Copy Icon */}
-                <div className="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs font-medium text-slate-400 dark:text-slate-500">
+                <div className="flex items-center gap-1.5 sm:gap-3 text-[10px] sm:text-xs font-medium text-slate-400 dark:text-slate-500 flex-shrink-0">
                   <span className="tabular-nums">
                     {output.length.toLocaleString()} {t("panelCharCount")}
                   </span>
@@ -1120,7 +1121,7 @@ export function ConverterPage() {
                     className="p-1 rounded-lg text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-slate-800 smooth-transition"
                     aria-label={t("panelOutputCopy")}
                   >
-                    <Copy size={15} />
+                    <Copy size={14} />
                   </button>
                 </div>
 
@@ -1137,18 +1138,18 @@ export function ConverterPage() {
               </div>
 
               {/* Right Footer: Download Options & Nusxalash */}
-              <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 bg-slate-50/50 dark:bg-slate-900/50">
+              <div className="px-3 sm:px-4 py-2 sm:py-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-1.5 sm:gap-2 bg-slate-50/50 dark:bg-slate-900/50 min-w-0">
                 
                 {/* Download Dropdown */}
                 <div className="relative" ref={downloadMenuRef}>
                   <button
                     type="button"
                     onClick={() => setDownloadOpen(!downloadOpen)}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 smooth-transition"
+                    className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 smooth-transition"
                   >
-                    <Download size={14} />
+                    <Download size={13} />
                     <span>{t("panelOutputDownload")}</span>
-                    <ChevronDown size={12} className={`text-slate-400 transition-transform ${downloadOpen ? "rotate-180" : ""}`} />
+                    <ChevronDown size={11} className={`text-slate-400 transition-transform ${downloadOpen ? "rotate-180" : ""}`} />
                   </button>
 
                   {downloadOpen && (
@@ -1184,13 +1185,13 @@ export function ConverterPage() {
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold shadow-subtle active:scale-[0.98] smooth-transition ${
+                  className={`inline-flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold shadow-subtle active:scale-[0.98] smooth-transition flex-shrink-0 ${
                     copied
                       ? "bg-emerald-600 hover:bg-emerald-700 text-white"
                       : "bg-primary-600 hover:bg-primary-700 text-white"
                   }`}
                 >
-                  {copied ? <Check size={15} /> : <Copy size={15} />}
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
                   <span>{copied ? t("panelOutputCopied") : t("panelOutputCopy")}</span>
                 </button>
 
@@ -1499,8 +1500,8 @@ export function ConverterPage() {
       {/* ─────────────────────────────────────────────────────────────
           J. FOOTER (Complete & Clean)
       ───────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B1120] text-slate-600 dark:text-slate-400 text-sm mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B1120] text-slate-600 dark:text-slate-400 text-sm mt-12 w-full max-w-full overflow-hidden">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12 sm:py-16 w-full min-w-0">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
             
             {/* Col 1: Brand Info */}

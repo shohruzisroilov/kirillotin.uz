@@ -24,8 +24,8 @@ export function SeoContent() {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-card">
-          <table className="w-full text-xs sm:text-sm">
+        <div className="max-w-4xl mx-auto w-full max-w-full overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-card">
+          <table className="min-w-[480px] sm:w-full text-xs sm:text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800">
               <tr className="text-left text-[11px] sm:text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 <th className="px-3 py-3.5 sm:px-4 sm:py-3.5 font-bold">{t("seoThCyr")}</th>

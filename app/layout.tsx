@@ -300,7 +300,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="uz" className={inter.variable} suppressHydrationWarning>
+    <html lang="uz" className={`${inter.variable} overflow-x-hidden`} suppressHydrationWarning>
       <head>
         <link rel="canonical" href={SITE_URL} />
         <link rel="alternate" hrefLang="uz" href={SITE_URL} />
@@ -345,7 +345,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="font-sans bg-slate-50 dark:bg-[#0B1120] text-slate-800 dark:text-slate-100 antialiased min-h-screen">
+      <body className="font-sans bg-slate-50 dark:bg-[#0B1120] text-slate-800 dark:text-slate-100 antialiased min-h-screen w-full max-w-full overflow-x-hidden">
         {GTM_ID && (
           <noscript>
             <iframe

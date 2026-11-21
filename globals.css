@@ -18,6 +18,13 @@
     @apply box-border;
   }
 
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+  }
+
   body {
     @apply bg-slate-50 text-slate-800 dark:bg-[#0B1120] dark:text-slate-100 antialiased selection:bg-sky-100 selection:text-sky-900 dark:selection:bg-sky-900/40 dark:selection:text-sky-200;
   }
