@@ -18,8 +18,8 @@
     @apply box-border;
   }
 
-  html {
-    /* Gate smooth scroll behind reduced-motion preference */
+  body {
+    @apply bg-slate-50 text-slate-800 dark:bg-[#0B1120] dark:text-slate-100 antialiased selection:bg-sky-100 selection:text-sky-900 dark:selection:bg-sky-900/40 dark:selection:text-sky-200;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -28,38 +28,26 @@
     }
   }
 
-  /* Eye-friendly warm whites in light mode (instead of pure white / cold gray) */
-  html:not(.dark) .bg-gray-50 { background-color: #f6f5f1; }
-  html:not(.dark) .bg-white { background-color: #fbfaf7; }
-  html:not(.dark) body { background-color: #f6f5f1; }
-
-  /* Tinted shadows in light mode — warm to match paper-cream */
-  html:not(.dark) .shadow-sm { box-shadow: 0 1px 2px 0 rgb(28 27 24 / 0.06); }
-  html:not(.dark) .shadow-md { box-shadow: 0 4px 6px -1px rgb(28 27 24 / 0.08), 0 2px 4px -2px rgb(28 27 24 / 0.06); }
-  html:not(.dark) .shadow-lg { box-shadow: 0 10px 15px -3px rgb(28 27 24 / 0.08), 0 4px 6px -4px rgb(28 27 24 / 0.06); }
-
-  /* Balance multi-line headings; prevent orphan words */
   h1, h2, h3 { text-wrap: balance; }
   p { text-wrap: pretty; }
 }
 
 @layer components {
-  /* Tight, GPU-friendly transition — replaces broad `transition: all` */
   .smooth-transition {
     transition:
-      background-color 180ms var(--ease-out-strong),
-      border-color 180ms var(--ease-out-strong),
-      color 180ms var(--ease-out-strong),
-      box-shadow 220ms var(--ease-out-strong),
-      transform 160ms var(--ease-out-strong),
-      opacity 180ms var(--ease-out-strong);
+      background-color 160ms var(--ease-out-strong),
+      border-color 160ms var(--ease-out-strong),
+      color 160ms var(--ease-out-strong),
+      box-shadow 200ms var(--ease-out-strong),
+      transform 140ms var(--ease-out-strong),
+      opacity 160ms var(--ease-out-strong);
   }
 
   .input-base {
-    @apply w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700
-      bg-white dark:bg-gray-900
-      text-gray-900 dark:text-white
-      placeholder-gray-400 dark:placeholder-gray-500
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800
+      bg-white dark:bg-slate-900
+      text-slate-900 dark:text-white
+      placeholder-slate-400 dark:placeholder-slate-500
       focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
       smooth-transition text-base leading-relaxed;
   }
@@ -67,27 +55,25 @@
   .button-base {
     @apply px-4 py-2.5 rounded-xl font-semibold smooth-transition
       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500
-      dark:focus:ring-offset-gray-900 select-none;
+      dark:focus:ring-offset-slate-900 select-none;
     will-change: transform;
   }
 
   .button-base:active:not(:disabled) {
     transform: scale(0.97);
-    transition-duration: 100ms;
+    transition-duration: 90ms;
   }
 
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700
-      shadow-sm smooth-transition;
+    @apply bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800
+      shadow-card smooth-transition;
   }
 
-  /* Touch devices emulate hover on tap — gate hover styles */
   @media (hover: hover) and (pointer: fine) {
     .card:hover {
-      @apply shadow-md;
+      @apply shadow-card-hover border-slate-300/90 dark:border-slate-700;
     }
   }
-
 }
 
 @layer utilities {
@@ -100,20 +86,16 @@
     background-image: radial-gradient(circle, #1e293b 1px, transparent 1px);
   }
 
-  /* Subtle paper-grain texture — reinforces the Quiet Reference north star */
-  /* Fixed, pointer-events-none, very low opacity. Inlined SVG so it loads with the CSS. */
-  .paper-grain {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.5;
-    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  /* Subtle background pattern */
+  .hero-mesh {
+    background: radial-gradient(circle at 50% 0%, rgba(7, 136, 209, 0.08) 0%, transparent 60%);
   }
-  .dark .paper-grain { opacity: 0.35; }
+  .dark .hero-mesh {
+    background: radial-gradient(circle at 50% 0%, rgba(7, 136, 209, 0.12) 0%, transparent 65%);
+  }
 }
 
-/* Custom scrollbar — quiet by default */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -124,15 +106,15 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300/60 dark:bg-gray-600/60 rounded-full;
+  @apply bg-slate-300 dark:bg-slate-700 rounded-full;
   transition: background-color 200ms var(--ease-out-strong);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-500;
+  @apply bg-slate-400 dark:bg-slate-600;
 }
 
-/* ── Toast ── */
+/* Toast */
 .toast {
   transform: translateY(0);
   opacity: 1;
@@ -154,44 +136,42 @@
   }
 }
 
-/* Fallback for browsers without @starting-style — uses data-mounted */
 .toast[data-mounted="false"] {
   transform: translateY(20px);
   opacity: 0;
 }
 
-/* ── Stagger fade-in ── */
+/* Stagger animations */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  from { opacity: 0; transform: translateY(6px) scale(0.99); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .animate-fade-in {
-  animation: fadeInUp 320ms var(--ease-out-strong) both;
+  animation: fadeInUp 280ms var(--ease-out-strong) both;
 }
 
 .stagger > * {
-  animation: fadeInUp 320ms var(--ease-out-strong) both;
+  animation: fadeInUp 280ms var(--ease-out-strong) both;
 }
 .stagger > *:nth-child(1) { animation-delay: 0ms; }
-.stagger > *:nth-child(2) { animation-delay: 40ms; }
-.stagger > *:nth-child(3) { animation-delay: 80ms; }
-.stagger > *:nth-child(4) { animation-delay: 120ms; }
-.stagger > *:nth-child(5) { animation-delay: 160ms; }
-.stagger > *:nth-child(6) { animation-delay: 200ms; }
-.stagger > *:nth-child(7) { animation-delay: 240ms; }
-.stagger > *:nth-child(8) { animation-delay: 280ms; }
+.stagger > *:nth-child(2) { animation-delay: 35ms; }
+.stagger > *:nth-child(3) { animation-delay: 70ms; }
+.stagger > *:nth-child(4) { animation-delay: 105ms; }
+.stagger > *:nth-child(5) { animation-delay: 140ms; }
+.stagger > *:nth-child(6) { animation-delay: 175ms; }
 
-/* ── FAQ disclosure: grid-template-rows trick for smooth height ── */
+/* FAQ Accordion */
 .faq-item {
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   overflow: hidden;
+  transition: all 200ms var(--ease-out-strong);
 }
 
 .faq-body {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 260ms var(--ease-out-strong);
+  transition: grid-template-rows 240ms var(--ease-out-strong);
 }
 
 .faq-body > div {
@@ -202,35 +182,10 @@
   grid-template-rows: 1fr;
 }
 
-.faq-chevron {
-  transition: transform 260ms var(--ease-out-strong);
-}
-
 .faq-item[data-open="true"] .faq-chevron {
   transform: rotate(180deg);
 }
 
-/* ── Morphing button content (blur-masked swap) ── */
-.morph-content {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: filter 180ms var(--ease-out-strong), opacity 180ms var(--ease-out-strong);
-}
-
-.morph-content[data-morphing="true"] {
-  filter: blur(2px);
-  opacity: 0.6;
-}
-
-/* ── Accessibility: respect reduced motion ── */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+.faq-chevron {
+  transition: transform 200ms var(--ease-out-strong);
 }

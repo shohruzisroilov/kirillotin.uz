@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, Loader2, FileText, X, Download, CheckCircle2 } from "lucide-react";
+import { UploadCloud, Loader2, FileText, X, Download, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
 import {
   isValidFileType,
@@ -35,6 +35,7 @@ export function FileUploader({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -85,6 +86,7 @@ export function FileUploader({
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (!file) return;
     const fakeEvent = { target: { files: [file] } } as unknown as React.ChangeEvent<HTMLInputElement>;
@@ -93,6 +95,12 @@ export function FileUploader({
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
   };
 
   return (
@@ -107,58 +115,56 @@ export function FileUploader({
       />
 
       {currentFileName ? (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-xl">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <FileText size={18} className="text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-primary-700 dark:text-primary-300 truncate">
-                {currentFileName}
-              </p>
-              {converting && (
-                <p className="text-xs text-primary-500 dark:text-primary-400 flex items-center gap-1 mt-0.5">
-                  <Loader2 size={11} className="animate-spin" />
-                  {t("uploaderConverting")}{directionLabel ? ` (${directionLabel})` : ""}…
-                </p>
-              )}
-              {ready && !converting && (
-                <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1 mt-0.5">
-                  <CheckCircle2 size={11} />
-                  {t("uploaderReady")}{directionLabel ? ` · ${directionLabel}` : ""}
-                </p>
-              )}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/60 rounded-2xl shadow-subtle animate-fade-in">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="w-10 h-10 rounded-xl bg-primary-500/10 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 flex items-center justify-center flex-shrink-0">
+              <FileText className="w-5 h-5" />
             </div>
-            
-            {/* Remove button stays in row with file details on mobile */}
-            <button
-              onClick={() => {
-                onFileClear?.();
-                setError("");
-              }}
-              className="text-primary-400 hover:text-primary-600 dark:hover:text-primary-200 transition-colors flex-shrink-0 p-1 sm:hidden"
-              aria-label={t("uploaderRemove")}
-            >
-              <X size={16} />
-            </button>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
+                  {currentFileName}
+                </p>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-100 dark:bg-sky-900/40 text-primary-700 dark:text-primary-300 uppercase tracking-wider flex-shrink-0">
+                  {currentFileName.endsWith(".docx") ? "DOCX" : "TXT"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {converting ? (
+                  <span className="flex items-center gap-1 text-primary-600 dark:text-primary-400 font-medium">
+                    <Loader2 size={12} className="animate-spin" />
+                    {t("uploaderConverting")} {directionLabel ? `(${directionLabel})` : ""}
+                  </span>
+                ) : ready ? (
+                  <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                    <CheckCircle2 size={13} />
+                    {t("uploaderReady")} {directionLabel ? `• ${directionLabel}` : ""}
+                  </span>
+                ) : null}
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             {ready && !converting && onDownload && (
               <button
+                type="button"
                 onClick={onDownload}
-                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 sm:px-3 sm:py-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition-colors w-full sm:w-auto flex-shrink-0 shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white text-xs font-semibold shadow-xs smooth-transition"
               >
                 <Download size={14} />
-                {t("uploaderDownload")}
+                <span>{t("uploaderDownload")}</span>
               </button>
             )}
 
-            {/* Remove button shifts right on larger screens */}
             <button
+              type="button"
               onClick={() => {
                 onFileClear?.();
                 setError("");
               }}
-              className="hidden sm:block text-primary-400 hover:text-primary-600 dark:hover:text-primary-200 transition-colors flex-shrink-0 p-1"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors"
+              title={t("uploaderRemove")}
               aria-label={t("uploaderRemove")}
             >
               <X size={16} />
@@ -169,28 +175,47 @@ export function FileUploader({
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:border-primary-400 dark:hover:border-primary-600 transition-colors cursor-pointer group"
+          onDragLeave={handleDragLeave}
           onClick={() => fileInputRef.current?.click()}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          className={`group relative overflow-hidden rounded-2xl border-2 border-dashed p-3.5 sm:p-4 text-center cursor-pointer transition-all duration-200 ${
+            isDragging
+              ? "border-primary-500 bg-primary-50/60 dark:bg-primary-950/30 scale-[1.005]"
+              : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:border-primary-400/80 dark:hover:border-primary-600 hover:bg-slate-50/80 dark:hover:bg-slate-900"
+          }`}
         >
           <div className="flex items-center justify-center gap-3">
-            {isProcessing ? (
-              <Loader2 size={18} className="animate-spin text-primary-500" />
-            ) : (
-              <Upload size={18} className="text-gray-400 group-hover:text-primary-500 transition-colors" />
-            )}
-            <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-              {isProcessing
-                ? t("uploaderProcessing")
-                : t("uploaderDropzone")}
-            </span>
+            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 group-hover:bg-primary-50 dark:group-hover:bg-primary-950/50 flex items-center justify-center transition-colors">
+              {isProcessing ? (
+                <Loader2 size={16} className="animate-spin text-primary-500" />
+              ) : (
+                <UploadCloud size={17} />
+              )}
+            </div>
+            <div className="text-left sm:flex sm:items-center sm:gap-2">
+              <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                {isProcessing ? t("uploaderProcessing") : t("uploaderDropzone")}
+              </span>
+              <span className="hidden sm:inline-block text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                · {t("uploaderBadge")}
+              </span>
+            </div>
           </div>
         </div>
       )}
 
       {error && (
-        <p className="mt-2 text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
-          <span>⚠</span> {error}
-        </p>
+        <div className="mt-2 text-xs text-rose-600 dark:text-rose-400 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 animate-fade-in">
+          <span>⚠️</span>
+          <span>{error}</span>
+        </div>
       )}
     </div>
   );

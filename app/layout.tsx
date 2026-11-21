@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Onest } from "next/font/google";
+import { Inter } from "next/font/google";
 import Script from "next/script";
 import { ToastProvider } from "@/components/ToastContext";
 import { ToastContainer } from "@/components/ToastContainer";
@@ -13,7 +13,7 @@ const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kirillotin.uz";
 
-const onest = Onest({
+const inter = Inter({
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
   display: "swap",
   variable: "--font-inter",
@@ -300,7 +300,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="uz" className={onest.variable} suppressHydrationWarning>
+    <html lang="uz" className={inter.variable} suppressHydrationWarning>
       <head>
         <link rel="canonical" href={SITE_URL} />
         <link rel="alternate" hrefLang="uz" href={SITE_URL} />
@@ -310,7 +310,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Kiril Lotin" />
+        <meta name="apple-mobile-web-app-title" content="Kirill Lotin" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="format-detection" content="telephone=no" />
         <script
@@ -345,7 +345,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="font-sans bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white antialiased">
+      <body className="font-sans bg-slate-50 dark:bg-[#0B1120] text-slate-800 dark:text-slate-100 antialiased min-h-screen">
         {GTM_ID && (
           <noscript>
             <iframe
@@ -358,11 +358,10 @@ export default function RootLayout({
         )}
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg focus:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg focus:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
         >
-          Асосий мазмунга ўтиш
+          Asosiy mazmunga o'tish
         </a>
-        <div className="paper-grain" aria-hidden="true" />
         <ThemeProvider>
           <LanguageProvider>
             <ToastProvider>
