@@ -1461,37 +1461,48 @@ export function ConverterPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredPosts.map((post) => (
-              <article
-                key={post.slug}
-                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-card hover:shadow-card-hover smooth-transition p-6 flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 mb-3">
-                    <Clock size={13} />
-                    <span>{post.readingMinutes} {t("blogReadTime")}</span>
-                    <span>•</span>
-                    <span>{post.date}</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 smooth-transition line-clamp-2 mb-2">
-                    <Link href={`/blog/${post.slug}`}>
-                      {post.title}
-                    </Link>
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed mb-4">
-                    {post.description}
-                  </p>
-                </div>
+            {featuredPosts.map((post) => {
+              const displayTitle =
+                locale === "uz-lat" || locale === "en"
+                  ? convertText(post.title, "cyrillic", "latin-old")
+                  : post.title;
+              const displayDesc =
+                locale === "uz-lat" || locale === "en"
+                  ? convertText(post.description, "cyrillic", "latin-old")
+                  : post.description;
 
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 dark:text-primary-400 group-hover:translate-x-1 smooth-transition"
+              return (
+                <article
+                  key={post.slug}
+                  className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-card hover:shadow-card-hover smooth-transition p-6 flex flex-col justify-between group"
                 >
-                  <span>Batafsil o'qish</span>
-                  <ArrowRight size={13} />
-                </Link>
-              </article>
-            ))}
+                  <div>
+                    <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 mb-3">
+                      <Clock size={13} />
+                      <span>{post.readingMinutes} {t("blogReadTime")}</span>
+                      <span>•</span>
+                      <span>{post.date}</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 smooth-transition line-clamp-2 mb-2">
+                      <Link href={`/blog/${post.slug}`}>
+                        {displayTitle}
+                      </Link>
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed mb-4">
+                      {displayDesc}
+                    </p>
+                  </div>
+
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 dark:text-primary-400 group-hover:translate-x-1 smooth-transition"
+                  >
+                    <span>{t("blogReadMore")}</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </article>
+              );
+            })}
           </div>
         </section>
 

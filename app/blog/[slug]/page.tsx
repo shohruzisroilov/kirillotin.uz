@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPost, posts } from "@/lib/posts";
+import { convertText } from "@/lib/converter";
+import { BlogPostView } from "@/components/BlogPostView";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kirillotin.uz";
 
@@ -16,15 +17,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPost(slug);
   if (!post) return {};
 
+  const latinTitle = convertText(post.title, "cyrillic", "latin-old");
+  const latinDesc = convertText(post.description, "cyrillic", "latin-old");
+  const dualTitle = `${latinTitle} | ${post.title}`;
+  const dualDesc = `${latinDesc} — ${post.description}`;
+
+  const latinKeywords = post.keywords.map((k) =>
+    convertText(k, "cyrillic", "latin-old")
+  );
+  const allKeywords = Array.from(new Set([...post.keywords, ...latinKeywords]));
+
   const url = `${SITE_URL}/blog/${post.slug}`;
   return {
-    title: post.title,
-    description: post.description,
-    keywords: post.keywords,
+    title: dualTitle,
+    description: dualDesc,
+    keywords: allKeywords,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
-      title: post.title,
-      description: post.description,
+      title: dualTitle,
+      description: dualDesc,
       type: "article",
       url,
       publishedTime: post.date,
@@ -32,8 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
-      description: post.description,
+      title: dualTitle,
+      description: dualDesc,
     },
   };
 }
@@ -43,18 +54,37 @@ export default async function BlogPostPage({ params }: Props) {
   const post = getPost(slug);
   if (!post) notFound();
 
-  const Content = post.content;
   const url = `${SITE_URL}/blog/${post.slug}`;
+  const latinTitle = convertText(post.title, "cyrillic", "latin-old");
 
-  // Related posts — boshqa 3 ta maqola
+  const Content = post.content;
+  const postMetadata = {
+    slug: post.slug,
+    title: post.title,
+    description: post.description,
+    date: post.date,
+    readingMinutes: post.readingMinutes,
+    keywords: post.keywords,
+  };
+
+  // Related posts — boshqa 3 ta maqola (serializable)
   const related = posts
     .filter((p) => p.slug !== slug)
-    .slice(0, 3);
+    .slice(0, 3)
+    .map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      description: p.description,
+      date: p.date,
+      readingMinutes: p.readingMinutes,
+      keywords: p.keywords,
+    }));
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
+    alternativeHeadline: latinTitle,
     description: post.description,
     datePublished: post.date,
     dateModified: post.date,
@@ -65,25 +95,25 @@ export default async function BlogPostPage({ params }: Props) {
     },
     publisher: {
       "@type": "Organization",
-      name: "Кирил ↔ Лотин Конвертор",
+      name: "Kirill ↔ Lotin Konvertor",
       url: SITE_URL,
     },
     mainEntityOfPage: url,
-    inLanguage: "uz-Cyrl",
+    inLanguage: ["uz-Latn", "uz-Cyrl"],
   };
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Бош саҳифа", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: "Блог", item: `${SITE_URL}/blog` },
-      { "@type": "ListItem", position: 3, name: post.title, item: url },
+      { "@type": "ListItem", position: 1, name: "Bosh sahifa / Бош саҳифа", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Blog / Блог", item: `${SITE_URL}/blog` },
+      { "@type": "ListItem", position: 3, name: `${latinTitle} / ${post.title}`, item: url },
     ],
   };
 
   return (
-    <div className="min-h-[100dvh] bg-gray-50 dark:bg-gray-950">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -92,100 +122,9 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-        <nav className="text-xs text-gray-500 dark:text-gray-400 mb-6">
-          <Link href="/" className="hover:text-primary-600 dark:hover:text-primary-400">
-            Бош саҳифа
-          </Link>{" "}
-          /{" "}
-          <Link
-            href="/blog"
-            className="hover:text-primary-600 dark:hover:text-primary-400"
-          >
-            Блог
-          </Link>
-        </nav>
-
-        <article>
-          <header className="mb-8">
-            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mb-3">
-              <time dateTime={post.date}>
-                {new Date(post.date).toLocaleDateString("uz-UZ", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-              <span>·</span>
-              <span>{post.readingMinutes} дақ. ўқиш</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
-              {post.title}
-            </h1>
-            <p className="mt-3 text-base text-gray-600 dark:text-gray-400 leading-relaxed">
-              {post.description}
-            </p>
-          </header>
-
-          <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none prose-headings:font-semibold prose-h2:text-xl prose-h2:sm:text-2xl prose-h2:mt-8 prose-h2:mb-3 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2 prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-strong:text-gray-900 dark:prose-strong:text-white prose-a:text-primary-600 dark:prose-a:text-primary-400 prose-a:no-underline hover:prose-a:underline prose-code:text-primary-700 dark:prose-code:text-primary-300 prose-code:bg-primary-50 dark:prose-code:bg-primary-900/30 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none">
-            <Content />
-          </div>
-        </article>
-
-        {/* CTA */}
-        <div className="mt-10 p-6 rounded-xl border border-primary-200 dark:border-primary-800 bg-primary-50/50 dark:bg-primary-900/20 text-center">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Матнни ёки файлни ҳозироқ ўгиринг
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Бепул, тез ва махфийликни сақловчи онлайн конвертор.
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors"
-          >
-            Конверторга ўтиш
-          </Link>
-        </div>
-
-        {/* Related posts */}
-        {related.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Бошқа мақолалар
-            </h2>
-            <ul className="space-y-3">
-              {related.map((p) => (
-                <li key={p.slug}>
-                  <Link
-                    href={`/blog/${p.slug}`}
-                    className="flex items-start gap-3 p-4 rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-primary-300 dark:hover:border-primary-700 transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white leading-snug">
-                        {p.title}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {p.readingMinutes} дақ. ўқиш
-                      </p>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <footer className="mt-10 pt-8 border-t border-gray-100 dark:border-gray-800">
-          <Link
-            href="/blog"
-            className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
-          >
-            ← Барча мақолалар
-          </Link>
-        </footer>
-      </div>
-    </div>
+      <BlogPostView post={postMetadata} related={related}>
+        <Content />
+      </BlogPostView>
+    </>
   );
 }

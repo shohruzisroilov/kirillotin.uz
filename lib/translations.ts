@@ -107,12 +107,21 @@ export interface TranslationDict {
   featuresWordDesc: string;
   featuresFootnote: string;
 
-  // Blog Section on Home
+  // Blog Section on Home & Pages
   blogEyebrow: string;
   blogTitle: string;
   blogSubtitle: string;
   blogViewAll: string;
   blogReadTime: string;
+  blogReadMore: string;
+  blogBackToHome: string;
+  blogAllPosts: string;
+  blogSearchPlaceholder: string;
+  blogCtaTitle: string;
+  blogCtaSubtitle: string;
+  blogCtaButton: string;
+  blogRelatedTitle: string;
+  blogScriptToggle: string;
 
   // FAQ
   faqEyebrow: string;
@@ -300,6 +309,15 @@ export const translations: Record<Locale, TranslationDict> = {
     blogSubtitle: "Kirill va lotin yozuvi qoidalari, tarixiy bosqichlar va Word hujjatlari bilan ishlash bo'yicha maqolalar",
     blogViewAll: "Barcha maqolalarni ko'rish",
     blogReadTime: "daqiqa o'qish",
+    blogReadMore: "Batafsil o'qish",
+    blogBackToHome: "Bosh sahifaga",
+    blogAllPosts: "Barcha maqolalar",
+    blogSearchPlaceholder: "Maqolalarni qidirish...",
+    blogCtaTitle: "Matn yoki faylni hoziroq o'giring",
+    blogCtaSubtitle: "Bepul, tezkor va maxfiylikni saqlovchi onlayn konvertor.",
+    blogCtaButton: "Konvertorga o'tish",
+    blogRelatedTitle: "Mavzuga doir boshqa maqolalar",
+    blogScriptToggle: "Yozuv turi:",
 
     faqEyebrow: "Savollar va javoblar",
     faqTitle: "Ko'p beriladigan savollar",
@@ -481,6 +499,15 @@ export const translations: Record<Locale, TranslationDict> = {
     blogSubtitle: "Кирилл ва лотин ёзуви қоидалари, тарихий босқичлар ва Word ҳужжатлари билан ишлаш бўйича мақолалар",
     blogViewAll: "Барча мақолаларни кўриш",
     blogReadTime: "дақиқа ўқиш",
+    blogReadMore: "Батафсил ўқиш",
+    blogBackToHome: "Бош саҳифага",
+    blogAllPosts: "Барча мақолалар",
+    blogSearchPlaceholder: "Мақолаларни қидириш...",
+    blogCtaTitle: "Матн ёки файлни ҳозироқ ўгиринг",
+    blogCtaSubtitle: "Бепул, тезкор ва махфийликни сақловчи онлайн конвертор.",
+    blogCtaButton: "Конверторга ўтиш",
+    blogRelatedTitle: "Мавзуга доир бошқа мақолалар",
+    blogScriptToggle: "Ёзув тури:",
 
     faqEyebrow: "Саволлар ва жавоблар",
     faqTitle: "Кўп бериладиган саволлар",
@@ -662,6 +689,15 @@ export const translations: Record<Locale, TranslationDict> = {
     blogSubtitle: "Правила правописания, различия алфавитов и руководства по работе с документами",
     blogViewAll: "Все статьи блога",
     blogReadTime: "мин. чтения",
+    blogReadMore: "Читать далее",
+    blogBackToHome: "На главную",
+    blogAllPosts: "Все статьи",
+    blogSearchPlaceholder: "Поиск статей...",
+    blogCtaTitle: "Конвертируйте текст прямо сейчас",
+    blogCtaSubtitle: "Бесплатный, быстрый и безопасный онлайн-конвертер.",
+    blogCtaButton: "Перейти к конвертеру",
+    blogRelatedTitle: "Похожие статьи",
+    blogScriptToggle: "Письменность:",
 
     faqEyebrow: "Вопросы и ответы",
     faqTitle: "Часто задаваемые вопросы",
@@ -843,6 +879,15 @@ export const translations: Record<Locale, TranslationDict> = {
     blogSubtitle: "Guides on alphabet reforms, spelling rules, and document workflows",
     blogViewAll: "View all articles",
     blogReadTime: "min read",
+    blogReadMore: "Read more",
+    blogBackToHome: "Back to home",
+    blogAllPosts: "All articles",
+    blogSearchPlaceholder: "Search articles...",
+    blogCtaTitle: "Convert text or document now",
+    blogCtaSubtitle: "Free, fast, and privacy-preserving online transliteration platform.",
+    blogCtaButton: "Go to converter",
+    blogRelatedTitle: "Related articles",
+    blogScriptToggle: "Writing system:",
 
     faqEyebrow: "FAQ",
     faqTitle: "Frequently Asked Questions",
