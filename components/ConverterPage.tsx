@@ -497,7 +497,7 @@ export function ConverterPage() {
           A. NAVIGATION / HEADER
       ───────────────────────────────────────────────────────────── */}
       <header
-        className={`sticky top-0 z-40 transition-all duration-200 border-b w-full max-w-full overflow-hidden ${
+        className={`sticky top-0 z-40 transition-all duration-200 border-b w-full ${
           scrolled
             ? "border-slate-200/80 dark:border-slate-800/80 bg-white/85 dark:bg-[#0B1120]/85 backdrop-blur-md shadow-card"
             : "border-transparent bg-white/60 dark:bg-[#0B1120]/60 backdrop-blur-sm"
@@ -627,10 +627,10 @@ export function ConverterPage() {
                 {langOpen && (
                   <>
                     <div
-                      className="fixed inset-0 z-30"
+                      className="fixed inset-0 z-40"
                       onClick={() => setLangOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-44 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-elevated p-1.5 z-40 animate-fade-in focus:outline-none">
+                    <div className="absolute right-0 mt-2 w-44 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-elevated p-1.5 z-50 animate-fade-in focus:outline-none">
                       {[
                         { code: "uz-lat", label: "O'zbekcha (Lotin)", flag: "🇺🇿" },
                         { code: "uz-cyr", label: "Ўзбекча (Кирилл)", flag: "🇺🇿" },
